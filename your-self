@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Special Note For You 🌸</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Nunito:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 50%, #ffd1dc 100%);
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Floating Petals Container */
+    .petals-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .petal {
+      position: absolute;
+      font-size: 1.2rem;
+      user-select: none;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-10vh) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(105vh) rotate(360deg);
+        opacity: 0.2;
+      }
+    }
+
+    /* Main Card Layout */
+    .wrapper {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 460px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Teddy Bear Decoration */
+    .teddy-box {
+      font-size: 65px;
+      margin-bottom: -15px;
+      z-index: 5;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+      animation: bounce 2.5s ease-in-out infinite;
+      cursor: pointer;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(3deg); }
+    }
+
+    /* Interactive Envelope */
+    .envelope-card {
+      position: relative;
+      width: 320px;
+      height: 210px;
+      background-color: #ffb7b2;
+      border-radius: 12px;
+      box-shadow: 0 15px 35px rgba(214, 93, 114, 0.25);
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .envelope-card:hover {
+      transform: scale(1.03);
+    }
+
+    .envelope-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 160px solid #ff9aa2;
+      border-right: 160px solid #ff9aa2;
+      border-bottom: 110px solid #ff8b94;
+      border-top: 100px solid transparent;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      z-index: 3;
+    }
+
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 160px solid transparent;
+      border-right: 160px solid transparent;
+      border-top: 115px solid #ff8b94;
+      transform-origin: top;
+      transition: transform 0.6s ease 0.2s, z-index 0.2s ease 0.2s;
+      z-index: 4;
+    }
+
+    .seal {
+      position: absolute;
+      top: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px;
+      height: 44px;
+      background: #e63946;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 20px;
+      box-shadow: 0 4px 10px rgba(230, 57, 70, 0.4);
+      z-index: 5;
+      transition: opacity 0.3s ease;
+    }
+
+    .click-hint {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #b5525c;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      background: rgba(255, 255, 255, 0.6);
+      padding: 8px 18px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.9; }
+      50% { opacity: 0.6; }
+    }
+
+    /* Opened State Styles */
+    .open .flap {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    .open .seal {
+      opacity: 0;
+    }
+
+    .open-hide {
+      transition: opacity 0.4s ease;
+    }
+
+    .open-container .open-hide {
+      opacity: 0;
+      pointer-events: none;
+      height: 0;
+      overflow: hidden;
+      margin: 0;
+    }
+
+    /* The Unfolded Letter */
+    .letter-paper {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      background: #fffdfa;
+      background-image: radial-gradient(#f7d6d8 0.75px, transparent 0.75px);
+      background-size: 16px 16px;
+      padding: 35px 28px;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(181, 82, 92, 0.15);
+      border: 2px solid #fff0f3;
+      opacity: 0;
+      transform: translateY(40px) scale(0.92);
+      transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .open-container .letter-paper {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      position: relative;
+      z-index: 10;
+      pointer-events: auto;
+    }
+
+    .letter-header {
+      font-family: 'Playfair Display', serif;
+      color: #b5384b;
+      font-size: 24px;
+      margin-bottom: 18px;
+      font-weight: 600;
+      border-bottom: 2px stroke #ffe4e1;
+      padding-bottom: 8px;
+    }
+
+    .letter-body {
+      color: #4a4a4a;
+      line-height: 1.7;
+      font-size: 15.5px;
+    }
+
+    .letter-body p {
+      margin-bottom: 14px;
+    }
+
+    .sub-heading {
+      font-weight: 700;
+      color: #b5384b;
+      margin-top: 18px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .reasons-list {
+      list-style: none;
+      padding-left: 5px;
+      margin-bottom: 18px;
+    }
+
+    .reasons-list li {
+      position: relative;
+      padding-left: 26px;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .reasons-list li::before {
+      content: '🌸';
+      position: absolute;
+      left: 0;
+      top: 1px;
+      font-size: 14px;
+    }
+
+    .signature-block {
+      margin-top: 28px;
+      text-align: right;
+    }
+
+    .signature-block .valediction {
+      font-style: italic;
+      color: #7a7a7a;
+      font-size: 14px;
+    }
+
+    .signature-block .name {
+      font-family: 'Caveat', cursive;
+      font-size: 36px;
+      color: #d62828;
+      font-weight: 600;
+      line-height: 1.1;
+      margin-top: 2px;
+    }
+
+    /* Floating Burst Animation Elements */
+    .burst-element {
+      position: fixed;
+      font-size: 22px;
+      pointer-events: none;
+      animation: floatBurst 4s ease-out forwards;
+      z-index: 99;
+    }
+
+    @keyframes floatBurst {
+      0% {
+        transform: translateY(0) scale(0.6) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-80vh) scale(1.3) rotate(180deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="petals-container" id="petals"></div>
+
+  <div class="wrapper" id="mainWrapper">
+    <!-- Teddy Bear Top Decoration -->
+    <div class="teddy-box open-hide" onclick="revealLetter()">🧸💐</div>
+
+    <!-- Envelope -->
+    <div class="envelope-card open-hide" id="envelope" onclick="revealLetter()">
+      <div class="flap"></div>
+      <div class="seal">❤️</div>
+    </div>
+
+    <!-- Click Instruction Hint -->
+    <div class="click-hint open-hide" id="hint">Tap to open your message 💌</div>
+
+    <!-- Letter Content -->
+    <div class="letter-paper" id="letter">
+      <div class="letter-header">Dearest kusumlata kumawat,</div>
+      <div class="letter-body">
+        <p>I wanted to send you something a little different today—a tiny corner of the internet made just for you.</p>
+        <p>From the small, everyday moments to the big memories we share, you've made life so much brighter. Thank you for being my favorite person to laugh with, talk to, and navigate life alongside.</p>
+        
+        <div class="sub-heading">✨ A few things I love about us:</div>
+        <ul class="reasons-list">
+          <li>How we can talk about everything and nothing all at once.</li>
+          <li>The way you always know how to make me smile.</li>
+          <li>Every single memory we’ve built together so far.</li>
+        </ul>
+
+        <p>Consider this a little reminder of how much you mean to me.</p>
+
+        <div class="signature-block">
+          <div class="valediction">Yours always,</div>
+          <div class="name">kushe</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Create Continuous Background Petals & Sparkles
+    const petalsContainer = document.getElementById('petals');
+    const petalIcons = ['🌸', '🌺', '✨', '💕', '🌷'];
+
+    function spawnPetal() {
+      const petal = document.createElement('div');
+      petal.classList.add('petal');
+      petal.innerText = petalIcons[Math.floor(Math.random() * petalIcons.length)];
+      petal.style.left = Math.random() * 100 + 'vw';
+      petal.style.animationDuration = (Math.random() * 3 + 4) + 's';
+      petal.style.fontSize = (Math.random() * 10 + 14) + 'px';
+      petalsContainer.appendChild(petal);
+
+      setTimeout(() => {
+        petal.remove();
+      }, 7000);
+    }
+
+    setInterval(spawnPetal, 400);
+
+    // Envelope Reveal Action
+    let opened = false;
+    function revealLetter() {
+      if (opened) return;
+      opened = true;
+
+      const envelope = document.getElementById('envelope');
+      const wrapper = document.getElementById('mainWrapper');
+
+      envelope.classList.add('open');
+
+      setTimeout(() => {
+        wrapper.classList.add('open-container');
+        triggerCelebrationBurst();
+      }, 500);
+    }
+
+    // Celebration Burst Effect on Open
+    function triggerCelebrationBurst() {
+      const burstIcons = ['💖', '🌸', '✨', '🧸', '💖', '🌷', '💕', '⭐'];
+      for (let i = 0; i < 35; i++) {
+        setTimeout(() => {
+          const el = document.createElement('div');
+          el.classList.add('burst-element');
+          el.innerText = burstIcons[Math.floor(Math.random() * burstIcons.length)];
+          el.style.left = (Math.random() * 80 + 10) + 'vw';
+          el.style.bottom = '10vh';
+          el.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+          document.body.appendChild(el);
+
+          setTimeout(() => el.remove(), 4000);
+        }, i * 100);
+      }
+    }
+  </script>
+</body>
+</html>
